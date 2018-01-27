@@ -39,7 +39,7 @@ router.get('/watson/:text', (req, res) => {
 router.get('/webhook', (req, res) => {
 
   // Your verify token. Should be a random string.
-  let VERIFY_TOKEN = "fintechhackwoohoo"
+  let VERIFY_TOKEN = "fintechhackwoohoo";
 
   // Parse the query params
   let mode = req.query['hub.mode'];
