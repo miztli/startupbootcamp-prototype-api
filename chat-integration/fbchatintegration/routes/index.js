@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-const PAGE_ACCESS_TOKEN="EAACbW8JF9IkBAHQhSbFxSV3fofMoDOVsDj8yauehMIIs06qrPUjWoD2jfnbDwC2ZCrnAYkmKHJObqe26DC20brEa6YNRwOky4UAlxTZAYbqDUGMnZCK3Uv38q26IpJA8x4IM314ri8YsS7iNv6sMwJ3RiqzZCOZBXEDAhDX1MDuZAygb0in2ED";
+const PAGE_ACCESS_TOKEN="EAACbW8JF9IkBAKjHCgLm1C8q0xw9cfp6RmNg0ggKZCwjjR1Xud4jlfxDKnn6JI1fB83ZCgFZAOzvSZBJx8ZBGdONyCpg4SyfmZCpcueNKiX7KIsVBdNpwpLUPYZA5EvEt5CeYe9ksB92ZA26wza8IbXZB40czeZBdYZBZAgTnjUG89fgsuh9zwjmRL1i";
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
