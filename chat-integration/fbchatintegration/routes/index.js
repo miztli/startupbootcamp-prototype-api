@@ -1,9 +1,33 @@
 var express = require('express');
+var watson = require('watson-developer-cloud');
 var router = express.Router();
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+
+//Watson
+router.get('/watson/:data', (req, res) => {
+  var ConversationV1 = require('watson-developer-cloud/conversation/v1');
+
+var conversation = new ConversationV1({
+  url: "https://gateway.watsonplatform.net/conversation/api",
+  username: "99fe2a28-6407-4227-9701-06d55b572c28",
+  password: "v7CdgcZ8mL5l",
+  version_date: ConversationV1.VERSION_DATE_2017_05_26
+});
+
+conversation.message(
+  {
+    input: { text: req.params.text},
+    workspace_id: 'dd995004-4f6b-4d21-b250-84fafafbd725'
+  },
+  function(err, response) {
+    if (err) {
+      console.error(err);
+    } else {
+      console.log(JSON.stringify(response, null, 2));
+    }
+  }
+);
 });
 
 // Adds support for GET requests to our webhook
