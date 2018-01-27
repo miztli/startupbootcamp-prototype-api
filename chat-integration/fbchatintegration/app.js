@@ -1,3 +1,10 @@
+var fs = require('fs');
+var http = require('http');
+var https = require('https');
+var privateKey  = fs.readFileSync('../../SSL/www.cognition.live_private_key.key', 'utf8');
+var certificate = fs.readFileSync('../../SSL/www.cognition.live_ssl_certificate.cer', 'utf8');
+var credentials = {key: privateKey, cert: certificate};
+
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -25,11 +32,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
 
-var port = process.env.PORT || 1337;
-
-app.listen(port, function () {
-  console.log('Example app listening on port ' + port + '!');
-});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -62,5 +64,18 @@ app.use(function(err, req, res, next) {
   });
 });
 
+var port = process.env.PORT || 1336;
+var ports = process.env.PORT || 1337;
+
+var httpServer = http.createServer(app);
+var httpsServer = https.createServer(credentials, app);
+
+
+httpServer.listen(port,function () {
+  console.log('Example app listening on port ' + port + '!');
+});
+httpsServer.listen(ports,function () {
+  console.log('Example app listening on port secured' + port + '!');
+}););
 
 module.exports = app;
