@@ -110,7 +110,7 @@ router.get('/webhook', (req, res) => {
 });
 
 // Creates the endpoint for our webhook
-app.post('/webhook', (req, res) => {
+router.post('/webhook', (req, res) => {
 
   // Parse the request body from the POST
   let body = req.body;
