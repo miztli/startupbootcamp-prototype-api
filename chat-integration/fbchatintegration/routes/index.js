@@ -113,6 +113,7 @@ router.get('/webhook', (req, res) => {
 router.post('/webhook', (req, res) => {
 
   // Parse the request body from the POST
+  console.log("Working");
   let body = req.body;
 
   // Check the webhook event is from a Page subscription
