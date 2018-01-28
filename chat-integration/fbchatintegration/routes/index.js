@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var request = require('request');
-const PAGE_ACCESS_TOKEN="EAACbW8JF9IkBAPh1PdAdLKg376hjXBo200gPTJfP8qZAR2xqOZAGYZAtcxA5IKlgZCZBub8StDtckhly2ZAVqm90EZAVYJPBl4rdvgHx6MSHGP5QALuIHKlBLVcs5xxojZB4mJA2d9icdZCstcK8JcUFDXyg0HS4WtdZAHU3dpMKd1h7sVV6apmc79";
+const PAGE_ACCESS_TOKEN="EAACbW8JF9IkBABS97VH4P3xl0P3yCxxN6SMRxxGW0A7SljZCWyxwSN9ZADIYOZAHLmD3vcBxFtVaAwKtZACqgcqlr7gZA0R52XhrhBVZBwoGlJZAElKWjo3GEot0YBUiIfC82sUI9OGYWwqJrtbRNczAPa5jpBywjOghBLslt52ZCFDOssJiidrr";
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
@@ -22,21 +22,35 @@ function receivedMessageStore(event) {
   var messageText = message.text;
   var messageAttachments = message.attachments;
 
-  if (messageText) {
+  request({
+    uri: 'https://cognition.live/watson/'+messageText,
+    method: 'GET'
 
-    // If we receive a text message, check to see if it matches a keyword
-    // and send back the example. Otherwise, just echo the text we received.
-    switch (messageText) {
-      case 'generic':
-        sendGenericMessage(senderID);
-        break;
+  }, function (error, response, body) {
+    console.log(body);
+    body=JSON.parse(body);
+    if (!error && response.statusCode == 200) {
+      if (body.intents.length>0 && body.intents[0].intent) {
+        switch (body.intents[0].intent) {
+          case 'cobrar':
+            sendGenericMessage(recipientID, messageText.substring(body.entities[0].location[0],body.entities[0].location[1]));
+            break;
 
-      default:
-        sendTextMessageStore(senderID, "repito: "+messageText);
+          default:
+            console.log("hearing");
+            //sendTextMessageStore(recipientID, "repito: "+messageText);
+        }
+      } else if (messageAttachments) {
+        console.log("hearing");
+        //sendTextMessage(recipientID, "Message with attachment received");
+      }
+    } else {
+      console.error("Unable to send message.");
+      console.error(response);
+      console.error(error);
     }
-  } else if (messageAttachments) {
-    sendTextMessage(senderID, "Message with attachment received");
-  }
+  });
+
 }
 
 
@@ -89,45 +103,24 @@ function receivedPostback(event) {
   sendTextMessage(senderID, "Postback called");
 }
 
-function sendGenericMessage(recipientId) {
+function sendGenericMessage(recipientId,quantity) {
   var messageData = {
     recipient: {
       id: recipientId
     },
     message: {
-      attachment: {
-        type: "template",
-        payload: {
-          template_type: "generic",
-          elements: [{
-            title: "rift",
-            subtitle: "Next-generation virtual reality",
-            item_url: "https://www.oculus.com/en-us/rift/",
-            image_url: "http://messengerdemo.parseapp.com/img/rift.png",
-            buttons: [{
-              type: "web_url",
-              url: "https://www.oculus.com/en-us/rift/",
-              title: "Open Web URL"
-            }, {
-              type: "postback",
-              title: "Call Postback",
-              payload: "Payload for first bubble",
-            }],
-          }, {
-            title: "touch",
-            subtitle: "Your Hands, Now in VR",
-            item_url: "https://www.oculus.com/en-us/touch/",
-            image_url: "http://messengerdemo.parseapp.com/img/touch.png",
-            buttons: [{
-              type: "web_url",
-              url: "https://www.oculus.com/en-us/touch/",
-              title: "Open Web URL"
-            }, {
-              type: "postback",
-              title: "Call Postback",
-              payload: "Payload for second bubble",
-            }]
-          }]
+      "attachment":{
+      "type":"template",
+        "payload":{
+          "template_type":"button",
+          "text":"Pago asegurado con Banregio",
+          "buttons":[
+            {
+              "type":"web_url",
+              "url":"http://cognition.live:8080",
+              "title":"$"+quantity
+            }
+          ]
         }
       }
     }
@@ -216,6 +209,7 @@ router.get('/watson/:text', (req, res) => {
         console.error(err);
       } else {
         console.log(JSON.stringify(response, null, 2));
+        res.json(response)
       }
     }
   );
@@ -251,7 +245,7 @@ router.post('/webhook', (req, res) => {
       entry.messaging.forEach(function(event) {
         if (event.message) {
           try{
-            if("is_echo" in event.message){
+            if("is_echo" in event.message && !("app_id" in event.message)){
               console.log(event.message);
               receivedMessageStore(event);
             }
