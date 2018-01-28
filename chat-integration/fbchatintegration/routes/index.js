@@ -204,12 +204,13 @@ router.post('/webhook', (req, res) => {
       // Iterate over each messaging event
       entry.messaging.forEach(function(event) {
         if (event.message) {
-          //if(message.is_echo){
-          //  console.log(message);
-          //}
-          //else {
+          let isEcho=message.is_echo;
+          if(isEcho){
+            console.log(message);
+          }
+          else {
             receivedMessage(event);
-          //}
+          }
         }
         else if (event.postback) {
           receivedPostback(event);
