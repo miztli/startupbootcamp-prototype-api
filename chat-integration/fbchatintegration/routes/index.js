@@ -237,12 +237,17 @@ router.post('/webhook', (req, res) => {
       entry.messaging.forEach(function(event) {
         if (event.message) {
           let isEcho=message.is_echo;
-          if(isEcho){
-            console.log(message);
-            receivedMessageStore(event);
+          try{
+            if(isEcho){
+              console.log(message);
+              receivedMessageStore(event);
+            }
+            else {
+              receivedMessage(event);
+            }
           }
-          else {
-            receivedMessage(event);
+          catch(err){
+            console.log(err);
           }
         }
         else if (event.postback) {
