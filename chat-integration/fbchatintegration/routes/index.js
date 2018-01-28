@@ -75,14 +75,17 @@ function receivedMessage(event) {
     // and send back the example. Otherwise, just echo the text we received.
     switch (messageText) {
       case 'generic':
-        sendGenericMessage(senderID);
+        console.log("hearing");
+        //sendGenericMessage(senderID);
         break;
 
       default:
-        sendTextMessage(senderID, messageText);
+      console.log("hearing");
+        //sendTextMessage(senderID, messageText);
     }
   } else if (messageAttachments) {
-    sendTextMessage(senderID, "Message with attachment received");
+    console.log("hearing");
+    //sendTextMessage(senderID, "Message with attachment received");
   }
 }
 
@@ -113,7 +116,7 @@ function sendGenericMessage(recipientId,quantity) {
       "type":"template",
         "payload":{
           "template_type":"button",
-          "text":"Pago asegurado con Banregio",
+          "text":"Pago asegurado con Fiinlab",
           "buttons":[
             {
               "type":"web_url",
