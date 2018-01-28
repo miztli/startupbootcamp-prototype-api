@@ -28,14 +28,15 @@ function receivedMessageStore(event) {
 
   }, function (error, response, body) {
     if (!error && response.statusCode == 200) {
-      if (messageText) {
-        switch (messageText) {
+      if (response.intents[0].intent) {
+        switch (response.intents[0].intent) {
           case 'cobrar':
             sendGenericMessage(recipientID);
             break;
 
           default:
-            sendTextMessageStore(recipientID, "repito: "+messageText);
+            console.log("hearing");
+            //sendTextMessageStore(recipientID, "repito: "+messageText);
         }
       } else if (messageAttachments) {
         sendTextMessage(recipientID, "Message with attachment received");
