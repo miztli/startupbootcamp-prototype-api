@@ -28,6 +28,7 @@ function receivedMessageStore(event) {
 
   }, function (error, response, body) {
     console.log(body);
+    body=JSON.parse(body);
     if (!error && response.statusCode == 200) {
       if (body.intents[0].intent) {
         switch (body.intents[0].intent) {
