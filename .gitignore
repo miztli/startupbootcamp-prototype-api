@@ -25,3 +25,11 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+
+#### Node js ###
+chat-integration/fbchatintegration/node_modules
+
+### SSL ###
+SSL
+
+*.DS_Store
