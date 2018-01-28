@@ -110,7 +110,22 @@ function sendTextMessage(recipientId, messageText) {
       id: recipientId
     },
     message: {
-      text: messageText
+      "message":{
+      "attachment":{
+        "type":"template",
+        "payload":{
+          "template_type":"button",
+          "text":"Liga de pago segura gracias a Banregio",
+          "buttons":[
+            {
+              "type":"web_url",
+              "url":"https://www.messenger.com",
+              "title":"$80"
+            }
+          ]
+        }
+      }
+    }
     }
   };
 
