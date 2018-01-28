@@ -33,7 +33,7 @@ function receivedMessageStore(event) {
       if (body.intents.length>0 && body.intents[0].intent) {
         switch (body.intents[0].intent) {
           case 'cobrar':
-            sendGenericMessage(recipientID);
+            sendGenericMessage(recipientID, messageText.substring(body.entities[0].location[0],body.entities[0].location[0]));
             break;
 
           default:
@@ -103,7 +103,7 @@ function receivedPostback(event) {
   sendTextMessage(senderID, "Postback called");
 }
 
-function sendGenericMessage(recipientId) {
+function sendGenericMessage(recipientId,quantity) {
   var messageData = {
     recipient: {
       id: recipientId
@@ -118,7 +118,7 @@ function sendGenericMessage(recipientId) {
             {
               "type":"web_url",
               "url":"http://cognition.live:8080",
-              "title":"$50"
+              "title":"$"+quantity
             }
           ]
         }
