@@ -110,22 +110,7 @@ function sendTextMessage(recipientId, messageText) {
       id: recipientId
     },
     message: {
-      "message":{
-      "attachment":{
-        "type":"template",
-        "payload":{
-          "template_type":"button",
-          "text":"Liga de pago segura gracias a Banregio",
-          "buttons":[
-            {
-              "type":"web_url",
-              "url":"https://www.messenger.com",
-              "title":"$80"
-            }
-          ]
-        }
-      }
-    }
+      text: messageText
     }
   };
 
@@ -219,7 +204,12 @@ router.post('/webhook', (req, res) => {
       // Iterate over each messaging event
       entry.messaging.forEach(function(event) {
         if (event.message) {
-          receivedMessage(event);
+          if(message.is_echo){
+            console.log(message);
+          }
+          else {
+            receivedMessage(event);
+          }
         }
         else if (event.postback) {
           receivedPostback(event);
