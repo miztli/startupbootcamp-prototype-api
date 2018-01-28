@@ -32,7 +32,7 @@ function receivedMessageStore(event) {
         break;
 
       default:
-        sendTextMessage(senderID, "repito: "+messageText);
+        sendTextMessageStore(senderID, "repito: "+messageText);
     }
   } else if (messageAttachments) {
     sendTextMessage(senderID, "Message with attachment received");
@@ -138,6 +138,20 @@ function sendGenericMessage(recipientId) {
 
 function sendTextMessage(recipientId, messageText) {
   var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      text: messageText
+    }
+  };
+
+  callSendAPI(messageData);
+}
+
+function sendTextMessageStore(recipientId, messageText) {
+  var messageData = {
+    message_type:"UPDATE",
     recipient: {
       id: recipientId
     },
