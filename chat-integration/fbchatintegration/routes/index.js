@@ -168,7 +168,7 @@ router.get('/watson/:text', (req, res) => {
 });
 
 
-app.get('/webhook', function(req, res) {
+router.get('/webhook', function(req, res) {
   if (req.query['hub.mode'] === 'subscribe' &&
       req.query['hub.verify_token'] === "fintechhackwoohoo") {
     console.log("Validating webhook");
