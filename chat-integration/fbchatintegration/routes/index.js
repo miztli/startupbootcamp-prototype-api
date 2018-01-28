@@ -30,10 +30,9 @@ function receivedMessageStore(event) {
     console.log(body);
     body=JSON.parse(body);
     if (!error && response.statusCode == 200) {
-      if (body.entities[0].length>0 && body.intents.length>0 && body.intents[0].intent) {
+      if (body.intents.length>0 && body.intents[0].intent) {
         switch (body.intents[0].intent) {
           case 'cobrar':
-
             sendGenericMessage(recipientID, messageText.substring(body.entities[0].location[0],body.entities[0].location[1]));
             break;
 
