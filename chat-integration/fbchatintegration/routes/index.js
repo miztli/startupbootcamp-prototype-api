@@ -6,54 +6,139 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-function handleMessage(sender_psid, received_message) {
 
-  let response;
+function receivedMessage(event) {
+  var senderID = event.sender.id;
+  var recipientID = event.recipient.id;
+  var timeOfMessage = event.timestamp;
+  var message = event.message;
 
-  // Check if the message contains text
-  if (received_message.text) {
+  console.log("Received message for user %d and page %d at %d with message:",
+    senderID, recipientID, timeOfMessage);
+  console.log(JSON.stringify(message));
 
-    // Create the payload for a basic text message
-    response = {
-      "text": 'You sent the message: "${received_message.text}". Now send me an image!'
+  var messageId = message.mid;
+
+  var messageText = message.text;
+  var messageAttachments = message.attachments;
+
+  if (messageText) {
+
+    // If we receive a text message, check to see if it matches a keyword
+    // and send back the example. Otherwise, just echo the text we received.
+    switch (messageText) {
+      case 'generic':
+        sendGenericMessage(senderID);
+        break;
+
+      default:
+        sendTextMessage(senderID, messageText);
     }
+  } else if (messageAttachments) {
+    sendTextMessage(senderID, "Message with attachment received");
   }
-
-  // Sends the response message
-  callSendAPI(sender_psid, response);
 }
 
-// Handles messaging_postbacks events
-function handlePostback(sender_psid, received_postback) {
+function receivedPostback(event) {
+  var senderID = event.sender.id;
+  var recipientID = event.recipient.id;
+  var timeOfPostback = event.timestamp;
 
+  // The 'payload' param is a developer-defined field which is set in a postback
+  // button for Structured Messages.
+  var payload = event.postback.payload;
+
+  console.log("Received postback for user %d and page %d with payload '%s' " +
+    "at %d", senderID, recipientID, payload, timeOfPostback);
+
+  // When a postback is called, we'll send a message back to the sender to
+  // let them know it was successful
+  sendTextMessage(senderID, "Postback called");
 }
 
-function callSendAPI(sender_psid, response) {
-  // Construct the message body
-  let request_body = {
-    "messaging_type":"RESPONSE",
-    "recipient": {
-      "id": sender_psid
+function sendGenericMessage(recipientId) {
+  var messageData = {
+    recipient: {
+      id: recipientId
     },
-    "message": response
-  }
-  console.log(PAGE_ACCESS_TOKEN);
-  // Send the HTTP request to the Messenger Platform
+    message: {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "generic",
+          elements: [{
+            title: "rift",
+            subtitle: "Next-generation virtual reality",
+            item_url: "https://www.oculus.com/en-us/rift/",
+            image_url: "http://messengerdemo.parseapp.com/img/rift.png",
+            buttons: [{
+              type: "web_url",
+              url: "https://www.oculus.com/en-us/rift/",
+              title: "Open Web URL"
+            }, {
+              type: "postback",
+              title: "Call Postback",
+              payload: "Payload for first bubble",
+            }],
+          }, {
+            title: "touch",
+            subtitle: "Your Hands, Now in VR",
+            item_url: "https://www.oculus.com/en-us/touch/",
+            image_url: "http://messengerdemo.parseapp.com/img/touch.png",
+            buttons: [{
+              type: "web_url",
+              url: "https://www.oculus.com/en-us/touch/",
+              title: "Open Web URL"
+            }, {
+              type: "postback",
+              title: "Call Postback",
+              payload: "Payload for second bubble",
+            }]
+          }]
+        }
+      }
+    }
+  };
 
+  callSendAPI(messageData);
+}
+
+function sendTextMessage(recipientId, messageText) {
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      text: messageText
+    }
+  };
+
+  callSendAPI(messageData);
+}
+
+function callSendAPI(messageData) {
   request({
-    "uri": "https://graph.facebook.com/v2.6/me/messages?access_token="+PAGE_ACCESS_TOKEN,
-    //"qs": { "access_token": PAGE_ACCESS_TOKEN },
-    "method": "POST",
-    "json": request_body
-  }, (err, res, body) => {
-    if (!err) {
-      console.log('message sent!')
+    uri: 'https://graph.facebook.com/v2.6/me/messages',
+    qs: { access_token: PAGE_ACCESS_TOKEN },
+    method: 'POST',
+    json: messageData
+
+  }, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      var recipientId = body.recipient_id;
+      var messageId = body.message_id;
+
+      console.log("Successfully sent generic message with id %s to recipient %s",
+        messageId, recipientId);
     } else {
-      console.error("Unable to send message:" + err);
+      console.error("Unable to send message.");
+      console.error(response);
+      console.error(error);
     }
   });
-
 }
+
+
 
 //Watson
 router.get('/watson/:text', (req, res) => {
@@ -83,73 +168,53 @@ router.get('/watson/:text', (req, res) => {
 });
 
 
-// Adds support for GET requests to our webhook
-router.get('/webhook', (req, res) => {
-
-  const VERIFY_TOKEN ="fintechhackwoohoo";
-  // Your verify token. Should be a random string.
-  //let VERIFY_TOKEN = "fintechhackwoohoo";
-
-  // Parse the query params
-  let mode = req.query['hub.mode'];
-  let token = req.query['hub.verify_token'];
-  let challenge = req.query['hub.challenge'];
-
-  // Checks if a token and mode is in the query string of the request
-  if (mode && token) {
-
-    // Checks the mode and token sent is correct
-    if (mode === 'subscribe' && token === VERIFY_TOKEN) {
-
-      // Responds with the challenge token from the request
-      console.log('WEBHOOK_VERIFIED');
-      res.status(200).send(challenge);
-
-    } else {
-      // Responds with '403 Forbidden' if verify tokens do not match
-      res.sendStatus(403);
-    }
+app.get('/webhook', function(req, res) {
+  if (req.query['hub.mode'] === 'subscribe' &&
+      req.query['hub.verify_token'] === "fintechhackwoohoo") {
+    console.log("Validating webhook");
+    res.status(200).send(req.query['hub.challenge']);
+  } else {
+    console.error("Failed validation. Make sure the validation tokens match.");
+    res.sendStatus(403);
   }
 });
+
 
 // Creates the endpoint for our webhook
 router.post('/webhook', (req, res) => {
 
-  // Parse the request body from the POST
-  console.log("Working");
-  let body = req.body;
+  var data = req.body;
+  console.log(data);
+  // Make sure this is a page subscription
+  if (data.object === 'page') {
 
-  // Check the webhook event is from a Page subscription
-  if (body.object === 'page') {
+    // Iterate over each entry - there may be multiple if batched
+    data.entry.forEach(function(entry) {
+      var pageID = entry.id;
+      var timeOfEvent = entry.time;
 
-  body.entry.forEach(function(entry) {
+      // Iterate over each messaging event
+      entry.messaging.forEach(function(event) {
+        if (event.message) {
+          receivedMessage(event);
+        }
+        else if (event.postback) {
+          receivedPostback(event);
+        }
+        else {
+          console.log("Webhook received unknown event: ", event);
+        }
+      });
+    });
 
-    // Gets the body of the webhook event
-    let webhook_event = entry.messaging[0];
-    console.log(webhook_event);
-
-
-    // Get the sender PSID
-    let sender_psid = webhook_event.sender.id;
-    console.log('Sender PSID: ' + sender_psid);
-
-    // Check if the event is a message or postback and
-    // pass the event to the appropriate handler function
-    if (webhook_event.message) {
-      handleMessage(sender_psid, webhook_event.message);
-    } else if (webhook_event.postback) {
-      handlePostback(sender_psid, webhook_event.postback);
-    }
-
-  });
-
-    // Return a '200 OK' response to all events
-    res.status(200).send('EVENT_RECEIVED');
-
-  } else {
-    // Return a '404 Not Found' if event is not from a page subscription
-    res.sendStatus(404);
+    // Assume all went well.
+    //
+    // You must send back a 200, within 20 seconds, to let us know
+    // you've successfully received the callback. Otherwise, the request
+    // will time out and we will keep trying to resend.
+    res.sendStatus(200);
   }
+
 
 });
 
