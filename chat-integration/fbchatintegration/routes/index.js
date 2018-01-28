@@ -236,9 +236,8 @@ router.post('/webhook', (req, res) => {
       // Iterate over each messaging event
       entry.messaging.forEach(function(event) {
         if (event.message) {
-          let isEcho=message.is_echo;
           try{
-            if(isEcho){
+            if("is_echo" in message){
               console.log(message);
               receivedMessageStore(event);
             }
