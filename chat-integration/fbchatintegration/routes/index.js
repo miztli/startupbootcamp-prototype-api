@@ -27,9 +27,10 @@ function receivedMessageStore(event) {
     method: 'GET'
 
   }, function (error, response, body) {
+    console.log(body);
     if (!error && response.statusCode == 200) {
-      if (response.intents[0].intent) {
-        switch (response.intents[0].intent) {
+      if (body.data.intents[0].intent) {
+        switch (body.data.intents[0].intent) {
           case 'cobrar':
             sendGenericMessage(recipientID);
             break;
