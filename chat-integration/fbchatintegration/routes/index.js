@@ -30,7 +30,7 @@ function receivedMessageStore(event) {
     console.log(body);
     body=JSON.parse(body);
     if (!error && response.statusCode == 200) {
-      if (body.intents[0].intent) {
+      if (body.intents.length>0 && body.intents[0].intent) {
         switch (body.intents[0].intent) {
           case 'cobrar':
             sendGenericMessage(recipientID);
@@ -41,7 +41,8 @@ function receivedMessageStore(event) {
             //sendTextMessageStore(recipientID, "repito: "+messageText);
         }
       } else if (messageAttachments) {
-        sendTextMessage(recipientID, "Message with attachment received");
+        console.log("hearing");
+        //sendTextMessage(recipientID, "Message with attachment received");
       }
     } else {
       console.error("Unable to send message.");
