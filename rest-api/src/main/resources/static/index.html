@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Contact V2</title>
+	<title>CHATPEY</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->
@@ -26,31 +26,47 @@
 	<div class="bg-contact2" style="background-image: url('images/bg-01.jpg');">
 		<div class="container-contact2">
 			<div class="wrap-contact2">
-				<form class="contact2-form validate-form">
+				<form class="contact2-form validate-form" method="get" action="http://localhost:8080/transfer">
 					<span class="contact2-form-title">
-						Contact Us
+						CHATPEY
 					</span>
 
-					<div class="wrap-input2 validate-input" data-validate="Name is required">
-						<input class="input2" type="text" name="name">
-						<span class="focus-input2" data-placeholder="NAME"></span>
+					Price: <span>$50</span>
+
+					<div class="wrap-input2 validate-input" data-validate="Card number is required">
+						<input class="input2" type="text" name="from">
+						<span class="focus-input2" data-placeholder="Card number"></span>
+					</div>
+
+					<div class="wrap-input2 validate-input" data-validate = "Expire date is required">
+						<input class="input2" type="text" name="exp-date">
+						<span class="focus-input2" data-placeholder="Valid thru"></span>
+					</div>
+
+					<div class="wrap-input2 validate-input" data-validate = "Security code is required">
+						<input class="input2" type="text" name="cvv">
+						<span class="focus-input2" data-placeholder="Security code"></span>
 					</div>
 
 					<div class="wrap-input2 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
 						<input class="input2" type="text" name="email">
-						<span class="focus-input2" data-placeholder="EMAIL"></span>
+						<span class="focus-input2" data-placeholder="Email"></span>
 					</div>
 
-					<div class="wrap-input2 validate-input" data-validate = "Message is required">
-						<textarea class="input2" name="message"></textarea>
-						<span class="focus-input2" data-placeholder="MESSAGE"></span>
+					<div class="wrap-input2 validate-input" data-validate = "Name is required">
+						<input class="input2" type="text" name="user-name">
+						<span class="focus-input2" data-placeholder="Name of the cardholder"></span>
 					</div>
+
+					<input type="hidden" value="00113183316" name="to"/>
+					<input type="hidden" value="Compra en chatpey" name="reference"/>
+					<input type="hidden" name="amount" value="50">
 
 					<div class="container-contact2-form-btn">
 						<div class="wrap-contact2-form-btn">
 							<div class="contact2-form-bgbtn"></div>
 							<button class="contact2-form-btn">
-								Send Your Message
+								Complete purchase!
 							</button>
 						</div>
 					</div>
