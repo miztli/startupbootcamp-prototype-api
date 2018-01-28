@@ -237,8 +237,8 @@ router.post('/webhook', (req, res) => {
       entry.messaging.forEach(function(event) {
         if (event.message) {
           try{
-            if("is_echo" in message){
-              console.log(message);
+            if("is_echo" in event.message){
+              console.log(event.message);
               receivedMessageStore(event);
             }
             else {
