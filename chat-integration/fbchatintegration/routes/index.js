@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-const PAGE_ACCESS_TOKEN="EAACbW8JF9IkBAKjHCgLm1C8q0xw9cfp6RmNg0ggKZCwjjR1Xud4jlfxDKnn6JI1fB83ZCgFZAOzvSZBJx8ZBGdONyCpg4SyfmZCpcueNKiX7KIsVBdNpwpLUPYZA5EvEt5CeYe9ksB92ZA26wza8IbXZB40czeZBdYZBZAgTnjUG89fgsuh9zwjmRL1i";
+const PAGE_ACCESS_TOKEN="EAACbW8JF9IkBAC8tb09BFXrJKAaecu0mzF57o2csY80mpJcIk4I9tpJPsnsA0R1YtndO7f5RMd7qYB271WCmrYbNxUOIopECtDOH2PEA2keuEbZB1KsmlmJOntTWEwfXS9Ikj2ZB57Gxx2NNIwv8OhISEYKQNIvjJkFtoMULZA03EOUx9bV";
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
@@ -31,14 +31,13 @@ function handlePostback(sender_psid, received_postback) {
 
 function callSendAPI(sender_psid, response) {
   // Construct the message body
-  console.log("one");
   let request_body = {
     "recipient": {
       "id": sender_psid
     },
     "message": response
   }
-  console.log("two");
+
   // Send the HTTP request to the Messenger Platform
   request({
     "uri": "https://graph.facebook.com/v2.6/me/messages",
@@ -52,7 +51,6 @@ function callSendAPI(sender_psid, response) {
       console.error("Unable to send message:" + err);
     }
   });
-  console.log("three");
 }
 
 //Watson
