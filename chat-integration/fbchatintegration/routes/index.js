@@ -86,7 +86,7 @@ router.get('/watson/:text', (req, res) => {
 // Adds support for GET requests to our webhook
 router.get('/webhook', (req, res) => {
 
-  const VERIFY_TOKEN ="EAACbW8JF9IkBAHQhSbFxSV3fofMoDOVsDj8yauehMIIs06qrPUjWoD2jfnbDwC2ZCrnAYkmKHJObqe26DC20brEa6YNRwOky4UAlxTZAYbqDUGMnZCK3Uv38q26IpJA8x4IM314ri8YsS7iNv6sMwJ3RiqzZCOZBXEDAhDX1MDuZAygb0in2ED";
+  const VERIFY_TOKEN ="fintechhackwoohoo";
   // Your verify token. Should be a random string.
   //let VERIFY_TOKEN = "fintechhackwoohoo";
 
