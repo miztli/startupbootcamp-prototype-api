@@ -22,21 +22,31 @@ function receivedMessageStore(event) {
   var messageText = message.text;
   var messageAttachments = message.attachments;
 
-  if (messageText) {
+  request({
+    uri: 'https://cognition.live/watson/'+messageText,
+    method: 'GET'
 
-    // If we receive a text message, check to see if it matches a keyword
-    // and send back the example. Otherwise, just echo the text we received.
-    switch (messageText) {
-      case 'generic':
-        sendGenericMessage(recipientID);
-        break;
+  }, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      if (messageText) {
+        switch (messageText) {
+          case 'cobrar':
+            sendGenericMessage(recipientID);
+            break;
 
-      default:
-        sendTextMessageStore(recipientID, "repito: "+messageText);
+          default:
+            sendTextMessageStore(recipientID, "repito: "+messageText);
+        }
+      } else if (messageAttachments) {
+        sendTextMessage(recipientID, "Message with attachment received");
+      }
+    } else {
+      console.error("Unable to send message.");
+      console.error(response);
+      console.error(error);
     }
-  } else if (messageAttachments) {
-    sendTextMessage(recipientID, "Message with attachment received");
-  }
+  });
+
 }
 
 
@@ -195,6 +205,7 @@ router.get('/watson/:text', (req, res) => {
         console.error(err);
       } else {
         console.log(JSON.stringify(response, null, 2));
+        res.json(response)
       }
     }
   );
