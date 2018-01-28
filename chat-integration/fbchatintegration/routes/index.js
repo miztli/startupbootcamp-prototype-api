@@ -28,14 +28,14 @@ function receivedMessageStore(event) {
     // and send back the example. Otherwise, just echo the text we received.
     switch (messageText) {
       case 'generic':
-        sendGenericMessage(senderID);
+        sendGenericMessage(recipientID);
         break;
 
       default:
-        sendTextMessageStore(senderID, "repito: "+messageText);
+        sendTextMessageStore(recipientID, "repito: "+messageText);
     }
   } else if (messageAttachments) {
-    sendTextMessage(senderID, "Message with attachment received");
+    sendTextMessage(recipientID, "Message with attachment received");
   }
 }
 
@@ -104,7 +104,7 @@ function sendGenericMessage(recipientId) {
             {
               "type":"web_url",
               "url":"http://cognition.live:8080",
-              "title":"$80"
+              "title":"$50"
             }
           ]
         }
